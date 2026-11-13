@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GuionLab — Automaquillaje sin Error</title>
+  <!-- Tipografías editoriales y modernas desde Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            marca: {
+              gris: '#7B7979',
+              lavanda: '#DCAEF7',
+              burdeos: '#35030C',
+              crema: '#FAF2D8',
+              marron: '#553A26',
+              oscuro: '#160F06',
+            }
+          },
+          fontFamily: {
+            serif: ['"Cormorant Garamond"', 'Georgia', 'serif'],
+            sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+          },
+          boxShadow: {
+            'editorial': '0 12px 36px -8px rgba(22, 15, 6, 0.08)',
+            'card-selected': '0 8px 24px -4px rgba(53, 3, 12, 0.14)',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Estilos base y scrollbar personalizado en tonos de marca */
+    body {
+      background-color: #FAF2D8;
+      color: #160F06;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* Transiciones suaves para tarjetas seleccionables */
+    .option-card {
+      transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    /* Estado seleccionado usando Burdeos y acento Lavanda */
+    .option-card.is-selected {
+      background-color: #35030C;
+      border-color: #DCAEF7;
+      color: #FAF2D8;
+      box-shadow: 0 10px 25px -5px rgba(53, 3, 12, 0.25);
+    }
+
+    .option-card.is-selected .card-title {
+      color: #FAF2D8;
+    }
+
+    .option-card.is-selected .card-desc {
+      color: rgba(250, 242, 216, 0.85);
+    }
+
+    .option-card.is-selected .custom-check {
+      background-color: #DCAEF7;
+      border-color: #DCAEF7;
+      color: #35030C;
+    }
+
+    /* Scrollbar sutil para el área de resultado del prompt */
+    textarea::-webkit-scrollbar {
+      width: 8px;
+    }
+    textarea::-webkit-scrollbar-track {
+      background: rgba(85, 58, 38, 0.08);
+      border-radius: 8px;
+    }
+    textarea::-webkit-scrollbar-thumb {
+      background: rgba(85, 58, 38, 0.35);
+      border-radius: 8px;
+    }
+    textarea::-webkit-scrollbar-thumb:hover {
+      background: #35030C;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between antialiased selection:bg-marca-lavanda selection:text-marca-burdeos">
+
+  <!-- Encabezado Editorial -->
+  <header class="bg-marca-burdeos text-marca-crema border-b border-marca-marron/30 relative overflow-hidden">
+    <!-- Detalle decorativo sutil en lavanda -->
+    <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-marca-burdeos via-marca-lavanda to-marca-burdeos opacity-90"></div>
+    
+    <div class="max-w-5xl mx-auto px-5 py-10 sm:py-12 text-center relative z-10">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-marca-crema/10 border border-marca-lavanda/30 mb-4">
+        <span class="w-2 h-2 rounded-full bg-marca-lavanda animate-pulse"></span>
+        <span class="text-xs sm:text-sm font-medium tracking-widest uppercase text-marca-lavanda">
+          Automaquillaje sin Error
+        </span>
+      </div>
+      
+      <h1 class="font-serif text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-marca-crema mb-3">
+        GuionLab
+      </h1>
+      
+      <p class="font-serif italic text-xl sm:text-2xl text-marca-lavanda/95 max-w-xl mx-auto">
+        «De un video a un guion con intención»
+      </p>
+      
+      <p class="mt-4 text-sm sm:text-base text-marca-crema/80 max-w-2xl mx-auto leading-relaxed font-normal">
+        Configura tu prompt maestro seleccionando uno o varios enfoques narrativos y los objetivos de llamada a la acción (CTA). Obtendrás la estructura íntegra lista para analizar tu video.
+      </p>
+    </div>
+  </header>
+
+  <!-- Contenido Principal -->
+  <main class="max-w-5xl w-full mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-10 flex-grow">
+
+    <!-- SECCIÓN 1: ENFOQUES DE CREACIÓN DE GUIONES -->
+    <section aria-labelledby="heading-enfoques" class="bg-white/75 backdrop-blur-sm border border-marca-marron/15 rounded-3xl p-6 sm:p-8 shadow-editorial">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2 pb-5 mb-6 border-b border-marca-marron/15">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-widest text-marca-marron block mb-1">Paso 01 • Obligatorio</span>
+          <h2 id="heading-enfoques" class="font-serif text-2xl sm:text-3xl font-bold text-marca-burdeos">
+            1. Enfoque del guion
+          </h2>
+        </div>
+        <span id="counter-approach" class="text-xs font-semibold px-3 py-1.5 rounded-full bg-marca-crema text-marca-marron border border-marca-marron/20 self-start sm:self-auto">
+          1 seleccionado
+        </span>
+      </div>
+
+      <p class="text-sm text-marca-gris mb-6">
+        Elige uno o varios enfoques estratégicos según lo que quieras lograr con el análisis del video.
+      </p>
+
+      <!-- Grid de Tarjetas de Enfoque -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="approaches-container">
+        <!-- Opción 1: Educativo (seleccionada por defecto igual que el original) -->
+        <label class="option-card is-selected relative flex items-start gap-4 p-5 rounded-2xl border-2 border-marca-marron/15 bg-white cursor-pointer select-none hover:border-marca-lavanda">
+          <input type="checkbox" class="approach sr-only" value="educativo" checked>
+          <div class="custom-check w-6 h-6 rounded-lg border-2 border-marca-marron/30 flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors">
+            <svg class="w-4 h-4 stroke-current" fill="none" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+          </div>
+          <div class="space-y-1.5">
+            <strong class="card-title block text-base font-bold text-marca-oscuro leading-snug">
+              Guion educativo — Explicar la función
+            </strong>
+            <span class="card-desc block text-sm text-marca-gris leading-relaxed">
+              Para qué sirve una técnica, qué efecto busca y por qué se realiza así.
+            </span>
+          </div>
+        </label>
+
+        <!-- Opción 2: Identificación -->
+        <label class="option-card relative flex items-start gap-4 p-5 rounded-2xl border-2 border-marca-marron/15 bg-white cursor-pointer select-none hover:border-marca-lavanda">
+          <input type="checkbox" class="approach sr-only" value="identificacion">
+          <div class="custom-check w-6 h-6 rounded-lg border-2 border-marca-marron/30 flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors text-transparent">
+            <svg class="w-4 h-4 stroke-current" fill="none" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+          </div>
+          <div class="space-y-1.5">
+            <strong class="card-title block text-base font-bold text-marca-oscuro leading-snug">
+              Guion de identificación — Explicar por qué cambia el resultado
+            </strong>
+            <span class="card-desc block text-sm text-marca-gris leading-relaxed">
+              Conectar con las frustraciones y explicar por qué una técnica produce resultados diferentes según el rostro.
+            </span>
+          </div>
+        </label>
+
+        <!-- Opción 3: Híbrido -->
+        <label class="option-card relative flex items-start gap-4 p-5 rounded-2xl border-2 border-marca-marron/15 bg-white cursor-pointer select-none hover:border-marca-lavanda">
+          <input type="checkbox" class="approach sr-only" value="hibrido">
+          <div class="custom-check w-6 h-6 rounded-lg border-2 border-marca-marron/30 flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors text-transparent">
+            <svg class="w-4 h-4 stroke-current" fill="none" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+          </div>
+          <div class="space-y-1.5">
+            <strong class="card-title block text-base font-bold text-marca-oscuro leading-snug">
+              Guion híbrido — Enseñar y generar identificación
+            </strong>
+            <span class="card-desc block text-sm text-marca-gris leading-relaxed">
+              Combinar una explicación útil con una situación reconocible para la audiencia.
+            </span>
+          </div>
+        </label>
+
+        <!-- Opción 4: Venta persuasiva -->
+        <label class="option-card relative flex items-start gap-4 p-5 rounded-2xl border-2 border-marca-marron/15 bg-white cursor-pointer select-none hover:border-marca-lavanda">
+          <input type="checkbox" class="approach sr-only" value="venta">
+          <div class="custom-check w-6 h-6 rounded-lg border-2 border-marca-marron/30 flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors text-transparent">
+            <svg class="w-4 h-4 stroke-current" fill="none" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+          </div>
+          <div class="space-y-1.5">
+            <strong class="card-title block text-base font-bold text-marca-oscuro leading-snug">
+              Guion de venta persuasiva — Vender sin vender
+            </strong>
+            <span class="card-desc block text-sm text-marca-gris leading-relaxed">
+              Despertar interés por aprender y mostrar el valor de formarse, sin presionar.
+            </span>
+          </div>
+        </label>
+      </div>
+    </section>
+
+    <!-- SECCIÓN 2: OBJETIVO DEL CTA -->
+    <section aria-labelledby="heading-cta" class="bg-white/75 backdrop-blur-sm border border-marca-marron/15 rounded-3xl p-6 sm:p-8 shadow-editorial">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2 pb-5 mb-6 border-b border-marca-marron/15">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-widest text-marca-marron block mb-1">Paso 02 • Obligatorio</span>
+          <h2 id="heading-cta" class="font-serif text-2xl sm:text-3xl font-bold text-marca-burdeos">
+            2. Objetivo del CTA
+          </h2>
+        </div>
+        <span id="counter-cta" class="text-xs font-semibold px-3 py-1.5 rounded-full bg-marca-crema text-marca-marron border border-marca-marron/20 self-start sm:self-auto">
+          1 seleccionado
+        </span>
+      </div>
+
+      <p class="text-sm text-marca-gris mb-6">
+        Selecciona uno o varios objetivos de llamada a la acción para adaptar el cierre de cada guion.
+      </p>
+
+      <!-- Grid de Tarjetas de CTA -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="ctas-container">
+        <!-- CTA 1: Conversación -->
+        <label class="option-card relative flex items-start gap-3.5 p-4 rounded-2xl border-2 border-marca-marron/15 bg-white cursor-pointer select-none hover:border-marca-lavanda">
+          <input type="checkbox" class="cta sr-only" value="conversacion">
+          <div class="custom-check w-5 h-5 rounded-md border-2 border-marca-marron/30 flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors text-transparent">
+            <svg class="w-3.5 h-3.5 stroke-current" fill="none" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+          </div>
+          <div class="space-y-1">
+            <strong class="card-title block text-sm sm:text-base font-bold text-marca-oscuro">Conversación</strong>
+            <span class="card-desc block text-xs sm:text-sm text-marca-gris leading-relaxed">Invitar a compartir una experiencia, dificultad u opinión relacionada con el contenido.</span>
+          </div>
+        </label>
+
+        <!-- CTA 2: Palabra clave -->
+        <label class="option-card relative flex items-start gap-3.5 p-4 rounded-2xl border-2 border-marca-marron/15 bg-white cursor-pointer select-none hover:border-marca-lavanda">
+          <input type="checkbox" class="cta sr-only" value="palabra">
+          <div class="custom-check w-5 h-5 rounded-md border-2 border-marca-marron/30 flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors text-transparent">
+            <svg class="w-3.5 h-3.5 stroke-current" fill="none" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+          </div>
+          <div class="space-y-1">
+            <strong class="card-title block text-sm sm:text-base font-bold text-marca-oscuro">Palabra clave</strong>
+            <span class="card-desc block text-xs sm:text-sm text-marca-gris leading-relaxed">Comentar una palabra concreta cuando exista una razón real para iniciar una conversación o activar un siguiente paso.</span>
+          </div>
+        </label>
+
+        <!-- CTA 3: Recurso gratuito -->
+        <label class="option-card relative flex items-start gap-3.5 p-4 rounded-2xl border-2 border-marca-marron/15 bg-white cursor-pointer select-none hover:border-marca-lavanda">
+          <input type="checkbox" class="cta sr-only" value="recurso">
+          <div class="custom-check w-5 h-5 rounded-md border-2 border-marca-marron/30 flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors text-transparent">
+            <svg class="w-3.5 h-3.5 stroke-current" fill="none" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+          </div>
+          <div class="space-y-1">
+            <strong class="card-title block text-sm sm:text-base font-bold text-marca-oscuro">Recurso gratuito</strong>
+            <span class="card-desc block text-xs sm:text-sm text-marca-gris leading-relaxed">Ofrecer una guía, lista, clase u otro recurso realmente disponible.</span>
+          </div>
+        </label>
+
+        <!-- CTA 4: Guardar (seleccionado por defecto igual que el original) -->
+        <label class="option-card is-selected relative flex items-start gap-3.5 p-4 rounded-2xl border-2 border-marca-marron/15 bg-white cursor-pointer select-none hover:border-marca-lavanda">
+          <input type="checkbox" class="cta sr-only" value="guardar" checked>
+          <div class="custom-check w-5 h-5 rounded-md border-2 border-marca-marron/30 flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors">
+            <svg class="w-3.5 h-3.5 stroke-current" fill="none" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+          </div>
+          <div class="space-y-1">
+            <strong class="card-title block text-sm sm:text-base font-bold text-marca-oscuro">Guardar</strong>
+            <span class="card-desc block text-xs sm:text-sm text-marca-gris leading-relaxed">Motivar a guardar el contenido para consultarlo cuando vayan a maquillarse.</span>
+          </div>
+        </label>
+
+        <!-- CTA 5: Compartir -->
+        <label class="option-card relative flex items-start gap-3.5 p-4 rounded-2xl border-2 border-marca-marron/15 bg-white cursor-pointer select-none hover:border-marca-lavanda">
+          <input type="checkbox" class="cta sr-only" value="compartir">
+          <div class="custom-check w-5 h-5 rounded-md border-2 border-marca-marron/30 flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors text-transparent">
+            <svg class="w-3.5 h-3.5 stroke-current" fill="none" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+          </div>
+          <div class="space-y-1">
+            <strong class="card-title block text-sm sm:text-base font-bold text-marca-oscuro">Compartir</strong>
+            <span class="card-desc block text-xs sm:text-sm text-marca-gris leading-relaxed">Invitar a compartirlo con alguien a quien pueda resultarle útil.</span>
+          </div>
+        </label>
+
+        <!-- CTA 6: Interacción sencilla -->
+        <label class="option-card relative flex items-start gap-3.5 p-4 rounded-2xl border-2 border-marca-marron/15 bg-white cursor-pointer select-none hover:border-marca-lavanda">
+          <input type="checkbox" class="cta sr-only" value="interaccion">
+          <div class="custom-check w-5 h-5 rounded-md border-2 border-marca-marron/30 flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors text-transparent">
+            <svg class="w-3.5 h-3.5 stroke-current" fill="none" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+          </div>
+          <div class="space-y-1">
+            <strong class="card-title block text-sm sm:text-base font-bold text-marca-oscuro">Interacción sencilla</strong>
+            <span class="card-desc block text-xs sm:text-sm text-marca-gris leading-relaxed">Plantear una elección, pedir que identifiquen una dificultad o invitar a responder algo concreto.</span>
+          </div>
+        </label>
+
+        <!-- CTA 7: Interés por aprender -->
+        <label class="option-card relative flex items-start gap-3.5 p-4 rounded-2xl border-2 border-marca-marron/15 bg-white cursor-pointer select-none hover:border-marca-lavanda">
+          <input type="checkbox" class="cta sr-only" value="interes">
+          <div class="custom-check w-5 h-5 rounded-md border-2 border-marca-marron/30 flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors text-transparent">
+            <svg class="w-3.5 h-3.5 stroke-current" fill="none" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+          </div>
+          <div class="space-y-1">
+            <strong class="card-title block text-sm sm:text-base font-bold text-marca-oscuro">Interés por aprender</strong>
+            <span class="card-desc block text-xs sm:text-sm text-marca-gris leading-relaxed">Despertar interés por comprender mejor el maquillaje, sin ofrecer todavía el curso.</span>
+          </div>
+        </label>
+
+        <!-- CTA 8: Venta persuasiva -->
+        <label class="option-card relative flex items-start gap-3.5 p-4 rounded-2xl border-2 border-marca-marron/15 bg-white cursor-pointer select-none hover:border-marca-lavanda">
+          <input type="checkbox" class="cta sr-only" value="venta">
+          <div class="custom-check w-5 h-5 rounded-md border-2 border-marca-marron/30 flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors text-transparent">
+            <svg class="w-3.5 h-3.5 stroke-current" fill="none" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+          </div>
+          <div class="space-y-1">
+            <strong class="card-title block text-sm sm:text-base font-bold text-marca-oscuro">Venta persuasiva</strong>
+            <span class="card-desc block text-xs sm:text-sm text-marca-gris leading-relaxed">Conectar el problema con la posibilidad de aprender de forma estructurada e invitar a conocer el curso cuando resulte coherente.</span>
+          </div>
+        </label>
+
+        <!-- CTA 9: Sin CTA explícito -->
+        <label class="option-card relative flex items-start gap-3.5 p-4 rounded-2xl border-2 border-marca-marron/15 bg-white cursor-pointer select-none hover:border-marca-lavanda">
+          <input type="checkbox" class="cta sr-only" value="sincta">
+          <div class="custom-check w-5 h-5 rounded-md border-2 border-marca-marron/30 flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors text-transparent">
+            <svg class="w-3.5 h-3.5 stroke-current" fill="none" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+          </div>
+          <div class="space-y-1">
+            <strong class="card-title block text-sm sm:text-base font-bold text-marca-oscuro">Sin CTA explícito</strong>
+            <span class="card-desc block text-xs sm:text-sm text-marca-gris leading-relaxed">Terminar con una conclusión útil, reflexión o idea memorable.</span>
+          </div>
+        </label>
+      </div>
+    </section>
+
+    <!-- SECCIÓN 3: PANEL DE GENERACIÓN Y RESULTADO -->
+    <section aria-labelledby="heading-generador" class="bg-marca-burdeos text-marca-crema rounded-3xl p-6 sm:p-8 shadow-editorial border border-marca-marron/40">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-marca-crema/15">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-widest text-marca-lavanda block mb-1">Paso 03 • Resultado</span>
+          <h2 id="heading-generador" class="font-serif text-2xl sm:text-3xl font-bold text-marca-crema">
+            Tu prompt maestro personalizado
+          </h2>
+        </div>
+
+        <!-- Botones Principales de Acción -->
+        <div class="flex flex-wrap items-center gap-3">
+          <button type="button" id="btn-generate" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl font-bold text-sm sm:text-base bg-marca-lavanda text-marca-burdeos hover:bg-marca-crema transition-all duration-200 shadow-md active:scale-[0.99] cursor-pointer">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456z"/>
+            </svg>
+            Generar mi prompt
+          </button>
+
+          <button type="button" id="btn-reset" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl font-semibold text-sm bg-marca-crema/10 text-marca-crema border border-marca-crema/20 hover:bg-marca-crema/20 transition-all duration-200 active:scale-[0.99] cursor-pointer">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"/>
+            </svg>
+            Restablecer selecciones
+          </button>
+        </div>
+      </div>
+
+      <!-- Mensaje de Estado / Retroalimentación -->
+      <div id="status-banner" role="status" aria-live="polite" class="hidden mt-5 px-4 py-3.5 rounded-2xl text-sm font-medium flex items-center gap-3 transition-all">
+        <span id="status-icon" class="flex-shrink-0"></span>
+        <span id="status-text"></span>
+      </div>
+
+      <!-- Área de texto con el prompt generado -->
+      <div class="mt-6 space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <label for="prompt-output" class="text-xs sm:text-sm font-medium text-marca-crema/85">
+            Vista previa del prompt completo (conserva toda la metodología y marca tus elecciones):
+          </label>
+          <button type="button" id="btn-copy" class="self-start sm:self-auto inline-flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-xs sm:text-sm bg-marca-crema text-marca-burdeos hover:bg-marca-lavanda transition-colors shadow-sm cursor-pointer">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.888A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 01-.75.75H9a.75.75 0 01-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184"/>
+            </svg>
+            Copiar prompt
+          </button>
+        </div>
+
+        <div class="relative">
+          <textarea
+            id="prompt-output"
+            readonly
+            rows="14"
+            placeholder="Selecciona al menos un enfoque y un CTA, y pulsa «Generar mi prompt» para visualizar el texto completo aquí..."
+            class="w-full rounded-2xl bg-marca-crema text-marca-oscuro p-4 sm:p-6 text-xs sm:text-sm font-mono leading-relaxed border-2 border-marca-lavanda/40 focus:outline-none focus:border-marca-lavanda resize-y shadow-inner"
+          ></textarea>
+        </div>
+
+        <!-- Nota explicativa original adaptada al diseño -->
+        <div class="flex items-start gap-3 p-4 rounded-2xl bg-marca-oscuro/40 border border-marca-crema/10 text-xs sm:text-sm text-marca-crema/85 leading-relaxed">
+          <svg class="w-5 h-5 text-marca-lavanda flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"/>
+          </svg>
+          <p>
+            Después de copiar, abre un chat nuevo, pega el prompt y adjunta el video que quieres analizar. Las casillas se convierten en marcas <code class="px-1.5 py-0.5 rounded bg-marca-crema/15 text-marca-lavanda font-mono">[x]</code> y <code class="px-1.5 py-0.5 rounded bg-marca-crema/15 text-marca-lavanda font-mono">[ ]</code>, no en botones, pero el nuevo chat entenderá cuáles opciones elegiste.
+          </p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Pie de página sobrio -->
+  <footer class="border-t border-marca-marron/15 py-6 px-4 text-center text-xs text-marca-marron">
+    <p class="font-medium">GuionLab — Automaquillaje sin Error</p>
+    <p class="mt-1 text-marca-gris">«Maquillaje con criterio, no con reglas universales»</p>
+  </footer>
+
+  <!-- Lógica JavaScript: Conserva íntegramente el texto, estructura y reglas originales -->
+  <script>
+    // Datos exactos de enfoques y CTAs del archivo original
+    const approaches = [
+      ['educativo', 'Guion educativo — Explicar la función', 'explicar para qué sirve una técnica, aplicación o producto, qué efecto busca conseguir y por qué se realiza de esa manera.'],
+      ['identificacion', 'Guion de identificación — Explicar por qué cambia el resultado', 'conectar con las frustraciones de la audiencia y mostrar por qué una técnica puede funcionar en un rostro y producir otro resultado en uno diferente.'],
+      ['hibrido', 'Guion híbrido — Enseñar y generar identificación', 'combinar una explicación útil con una situación en la que la audiencia pueda reconocerse.'],
+      ['venta', 'Guion de venta persuasiva — Vender sin vender', 'despertar interés por aprender, mostrar el valor de adquirir conocimientos y conectar el problema con la posibilidad de formarse, sin presionar ni convertir el contenido en un anuncio evidente.']
+    ];
+
+    const ctas = [
+      ['conversacion', 'Conversación'],
+      ['palabra', 'Palabra clave'],
+      ['recurso', 'Recurso gratuito'],
+      ['guardar', 'Guardar'],
+      ['compartir', 'Compartir'],
+      ['interaccion', 'Interacción sencilla'],
+      ['interes', 'Interés por aprender'],
+      ['venta', 'Venta persuasiva'],
+      ['sincta', 'Sin CTA explícito']
+    ];
+
+    // Referencias al DOM
+    const outputArea = document.getElementById('prompt-output');
+    const statusBanner = document.getElementById('status-banner');
+    const statusIcon = document.getElementById('status-icon');
+    const statusText = document.getElementById('status-text');
+    const counterApproach = document.getElementById('counter-approach');
+    const counterCta = document.getElementById('counter-cta');
+
+    // Obtener valores seleccionados por clase
+    function checked(cls) {
+      return [...document.querySelectorAll('.' + cls + ':checked')].map(x => x.value);
+    }
+
+    // Actualizar estilos visuales de las tarjetas y contadores
+    function syncVisualState() {
+      document.querySelectorAll('.option-card').forEach(card => {
+        const input = card.querySelector('input[type="checkbox"]');
+        const checkBox = card.querySelector('.custom-check');
+        if (input && input.checked) {
+          card.classList.add('is-selected');
+          if (checkBox) checkBox.classList.remove('text-transparent');
+        } else {
+          card.classList.remove('is-selected');
+          if (checkBox) checkBox.classList.add('text-transparent');
+        }
+      });
+
+      const aCount = checked('approach').length;
+      const cCount = checked('cta').length;
+      counterApproach.textContent = aCount === 1 ? '1 seleccionado' : `${aCount} seleccionados`;
+      counterCta.textContent = cCount === 1 ? '1 seleccionado' : `${cCount} seleccionados`;
+    }
+
+    // Mostrar retroalimentación clara al usuario
+    function showFeedback(message, type = 'success') {
+      statusBanner.classList.remove(
+        'hidden',
+        'bg-marca-lavanda/20', 'border-marca-lavanda', 'text-marca-crema',
+        'bg-amber-900/40', 'border-amber-300/60', 'text-amber-100'
+      );
+
+      if (type === 'warning') {
+        statusBanner.classList.add('bg-amber-900/40', 'border', 'border-amber-300/60', 'text-amber-100');
+        statusIcon.innerHTML = `<svg class="w-5 h-5 text-amber-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/></svg>`;
+      } else {
+        statusBanner.classList.add('bg-marca-lavanda/20', 'border', 'border-marca-lavanda', 'text-marca-crema');
+        statusIcon.innerHTML = `<svg class="w-5 h-5 text-marca-lavanda" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`;
+      }
+
+      statusText.textContent = message;
+    }
+
+    function hideFeedback() {
+      statusBanner.classList.add('hidden');
+    }
+
+    // Construcción íntegra del prompt original sin alterar una sola palabra
+    function build() {
+      const a = checked('approach'), c = checked('cta');
+      if (!a.length || !c.length) return null;
+
+      const approachLines = approaches.map(([v, l, d]) => `- [${a.includes(v) ? 'x' : ' '}] **${l}:** ${d}`).join('\n');
+      const ctaLines = ctas.map(([v, l]) => `- [${c.includes(v) ? 'x' : ' '}] **${l}**`).join('\n');
+
+      return `# PROMPT MAESTRO — ANÁLISIS DE VIDEOS Y GUIONES DE AUTOMAQUILLAJE
+
+## 1. ROL Y CONTEXTO DE MARCA
+
+Actúa como experto en análisis audiovisual, estrategia de contenidos, escritura persuasiva y marketing para redes sociales, especializado en el proyecto **Automaquillaje sin Error**.
+
+Nuestra marca ayuda a mujeres que no han aprendido a maquillarse como quisieran, que copian tutoriales sin conseguir el resultado esperado o que sienten que no saben qué están haciendo mal.
+
+Nuestra filosofía es:
+
+**«Maquillaje con criterio, no con reglas universales».**
+
+No queremos limitarnos a enseñar pasos ni a mostrar maquillajes bonitos. Queremos ayudar a comprender por qué funcionan las técnicas, por qué los resultados cambian de un rostro a otro y cómo adaptar el maquillaje a las propias características.
+
+El maquillaje es el vehículo; aprender a comprenderlo y tomar mejores decisiones es el verdadero valor.
+
+## 2. ANÁLISIS DEL VIDEO
+
+Analiza cuidadosamente el video adjunto y desarrolla lo siguiente:
+
+**A. Transcripción visual**
+
+- Describe cronológicamente las acciones y aplicaciones visibles.
+- Incluye las marcas de tiempo de cada escena.
+- Identifica qué ocurre, qué cambia y qué detalles visuales pueden aprovecharse para explicar algo.
+- No inventes productos, técnicas, intenciones ni detalles que no puedas confirmar.
+- Si algo no se distingue con claridad, indícalo.
+
+**B. Análisis estratégico**
+
+Evalúa cómo aprovechar las imágenes para crear contenido útil, diferente y relevante para nuestra audiencia.
+
+Identifica las frustraciones, dudas, errores frecuentes o aprendizajes que podrían conectarse con las escenas.
+
+No asumas que cada paso necesita una explicación. Selecciona los momentos que mejor sostengan la idea central del guion.
+
+No valides mis ideas automáticamente. Si detectas una oportunidad mejor, una debilidad o un enfoque más interesante, propón la mejora y explica brevemente por qué.
+
+## 3. ENFOQUE DEL GUION: ELIGE ANTES DE ENVIAR
+
+**Conserva únicamente el enfoque o los enfoques que aparecen seleccionados y elimina los demás.**
+
+${approachLines}
+
+### Instrucciones para desarrollar los guiones
+
+Por cada enfoque que conserve, crea **tres guiones con ángulos estratégicos diferentes**.
+
+No entregues tres versiones que simplemente cambien unas palabras.
+
+Por ejemplo, en un enfoque educativo, los tres ángulos podrían centrarse en:
+
+1. La función de una técnica.
+2. El efecto que busca conseguir.
+3. Un error de aplicación y cómo comprenderlo mejor.
+
+Son ejemplos orientativos, no categorías obligatorias. Elige los ángulos más adecuados para el video analizado.
+
+Cada guion debe tener una idea central propia, un argumento coherente y una razón clara para existir. Si selecciono varios enfoques, entrega tres propuestas por cada uno.
+
+Recomienda cuál tiene mayor potencial para el objetivo del contenido y explica brevemente por qué.
+
+## 4. VARIEDAD EN LOS INICIOS
+
+Evita que los guiones comiencen sistemáticamente con una pregunta.
+
+Puedes abrir con:
+
+- Una afirmación contundente.
+- Una observación que la audiencia reconozca.
+- Un error frecuente.
+- Una situación cotidiana.
+- Un contraste entre lo que se suele creer y lo que ocurre en realidad.
+- Una consecuencia inesperada.
+- Una explicación que despierte curiosidad.
+- Una pregunta, cuando realmente sea la mejor opción.
+
+Varía los recursos narrativos entre las propuestas. No utilices el mismo patrón de apertura en los tres guiones.
+
+El inicio debe captar la atención de forma natural, conectar con la idea central y evitar el sensacionalismo, las promesas exageradas y los ganchos engañosos.
+
+## 5. CTA: ELIGE EL OBJETIVO DE LA LLAMADA A LA ACCIÓN
+
+**Conserva únicamente la opción u opciones seleccionadas. Ignora las que no estén seleccionadas.**
+
+${ctaLines}
+
+### Reglas para elegir el CTA
+
+- **Conversación:** invitar a compartir una experiencia, una dificultad o una opinión relacionada con el contenido.
+- **Palabra clave:** invitar a comentar una palabra concreta cuando exista una razón real para iniciar una conversación o activar un siguiente paso.
+- **Recurso gratuito:** ofrecer una guía, lista de comprobación, clase u otro recurso que aporte valor y esté realmente disponible para entregar.
+- **Guardar:** motivar a guardar el contenido para consultarlo cuando vayan a maquillarse.
+- **Compartir:** invitar a compartirlo con alguien a quien pueda resultarle útil.
+- **Interacción sencilla:** plantear una elección, pedir que identifiquen una dificultad o invitar a responder algo concreto.
+- **Interés por aprender:** despertar el interés por comprender mejor el maquillaje, sin ofrecer todavía el curso.
+- **Venta persuasiva:** conectar el problema explicado con la posibilidad de aprender de forma estructurada e invitar a conocer el curso cuando resulte coherente.
+- **Sin CTA explícito:** terminar con una conclusión útil, una reflexión o una idea memorable.
+
+El CTA debe corresponder al enfoque, al contenido y al objetivo de la publicación.
+
+No pidas una palabra clave por costumbre ni únicamente para conseguir comentarios.
+
+No ofrezcas un recurso gratuito si no es necesario o si no existe un recurso preparado para entregar.
+
+Si se utiliza una palabra clave, explica brevemente qué ocurrirá después de comentarla.
+
+Si el objetivo es conversar, formula una invitación natural y fácil de responder.
+
+Si el objetivo es vender, construye un puente entre el problema, el valor de aprender y el siguiente paso, sin presión artificial.
+
+Evita terminar todos los guiones con «comenta», «escríbeme» o «envíame un mensaje».
+
+Si considero que el CTA elegido perjudica la estrategia, indícalo y recomienda una alternativa.
+
+Entrega un CTA concreto para cada guion. Si selecciono varias opciones de CTA, adapta las propuestas a esas opciones sin añadir mecánicamente todas al mismo guion.
+
+## 6. REDACCIÓN Y SINCRONIZACIÓN
+
+Redacta los guiones con un lenguaje claro, natural, preciso y fácil de narrar en voz alta.
+
+- Ajusta cada guion a la duración real del video.
+- Distribuye la narración según las escenas y sus marcas de tiempo.
+- Haz que las palabras acompañen a las imágenes, sin describir obviedades que ya se ven.
+- Explica los porqués más importantes con palabras sencillas.
+- Prioriza una idea central por guion.
+- Evita saturar la narración, repetir conceptos o utilizar términos técnicos sin necesidad.
+- No sacrifiques la claridad para incluir más información.
+- Si una frase no cabe de forma natural en el tiempo disponible, recórtala.
+- No afirmes que la sincronización es exacta al segundo si no has comprobado que el texto puede narrarse a una velocidad natural dentro de cada segmento.
+
+## 7. FORMATO DE ENTREGA
+
+Presenta los resultados en este orden:
+
+1. **Análisis visual:** descripción cronológica con marcas de tiempo.
+2. **Análisis estratégico:** oportunidades, idea central recomendada y breve justificación.
+3. **Guiones propuestos:** tres guiones por cada enfoque seleccionado, claramente diferenciados y con sus respectivas marcas de tiempo.
+4. **CTA de cada propuesta:** integrado en el guion y coherente con el objetivo elegido.
+5. **Recomendación final:** indica cuál de las propuestas utilizarías primero y por qué.
+
+## OBJETIVO FINAL
+
+Crear contenido que haga que nuestra audiencia se sienta comprendida, aprenda algo útil y descubra que maquillarse mejor no consiste en copiar técnicas a ciegas, sino en entenderlas y adaptarlas a su propio rostro.
+
+Cada publicación debe aportar valor por sí misma y contribuir a construir confianza en nuestra marca. La venta, cuando corresponda, debe surgir de forma coherente del valor que ofrecemos.`;
+    }
+
+    // Validación clara de selecciones faltantes
+    function validateSelections() {
+      const a = checked('approach');
+      const c = checked('cta');
+      if (!a.length && !c.length) {
+        showFeedback('Por favor, selecciona al menos un enfoque del guion y un objetivo de CTA para generar tu prompt.', 'warning');
+        return false;
+      }
+      if (!a.length) {
+        showFeedback('Falta elegir el paso 1: selecciona al menos un enfoque del guion.', 'warning');
+        return false;
+      }
+      if (!c.length) {
+        showFeedback('Falta elegir el paso 2: selecciona al menos un objetivo del CTA.', 'warning');
+        return false;
+      }
+      return true;
+    }
+
+    // Función segura para copiar al portapapeles (compatible con iframes y navegadores modernos)
+    async function copyTextToClipboard(text) {
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(text);
+          return true;
+        }
+      } catch (err) {
+        // Fallback abajo si clipboard API falla por permisos o iframe
+      }
+
+      try {
+        const tempTextarea = document.createElement('textarea');
+        tempTextarea.value = text;
+        tempTextarea.style.position = 'fixed';
+        tempTextarea.style.left = '-9999px';
+        document.body.appendChild(tempTextarea);
+        tempTextarea.focus();
+        tempTextarea.select();
+        const success = document.execCommand('copy');
+        tempTextarea.remove();
+        return success;
+      } catch (err) {
+        return false;
+      }
+    }
+
+    // Escuchar cambios en cualquier checkbox para actualizar tarjetas y vista previa en vivo
+    document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+      checkbox.addEventListener('change', () => {
+        syncVisualState();
+        const promptText = build();
+        if (promptText) {
+          outputArea.value = promptText;
+          hideFeedback();
+        } else {
+          outputArea.value = '';
+        }
+      });
+    });
+
+    // Botón principal: Generar mi prompt
+    document.getElementById('btn-generate').addEventListener('click', () => {
+      if (!validateSelections()) return;
+      const promptText = build();
+      outputArea.value = promptText;
+      showFeedback('¡Listo! Tu prompt maestro se ha generado con las opciones seleccionadas.', 'success');
+    });
+
+    // Botón: Copiar prompt
+    document.getElementById('btn-copy').addEventListener('click', async () => {
+      if (!validateSelections()) return;
+      const promptText = build();
+      outputArea.value = promptText;
+
+      const copied = await copyTextToClipboard(promptText);
+      if (copied) {
+        showFeedback('¡Prompt copiado al portapapeles! Ya puedes pegarlo en un chat nuevo junto con tu video.', 'success');
+      } else {
+        showFeedback('No se pudo copiar automáticamente. Selecciona el texto del recuadro y cópialo manualmente.', 'warning');
+      }
+    });
+
+    // Botón secundario: Restablecer selecciones
+    document.getElementById('btn-reset').addEventListener('click', () => {
+      document.querySelectorAll('input[type="checkbox"]').forEach(x => {
+        x.checked = false;
+      });
+      syncVisualState();
+      outputArea.value = '';
+      showFeedback('Todas las selecciones han sido restablecidas. Elige nuevamente un enfoque y un CTA.', 'success');
+    });
+
+    // Inicialización al cargar la página
+    window.addEventListener('DOMContentLoaded', () => {
+      syncVisualState();
+      const initialPrompt = build();
+      if (initialPrompt) {
+        outputArea.value = initialPrompt;
+      }
+    });
+  </script>
+</body>
+</html>
